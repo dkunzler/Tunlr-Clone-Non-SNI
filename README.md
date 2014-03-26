@@ -20,6 +20,7 @@ This will create virtual interfaces eth0:0 to eth0:16, with IPs 192.168.0.101 to
 You can probably use HTTPS-SNI-Proxy as described in the [Tunlr Clone guide](http://corporate-gadfly.github.io/Tunlr-Clone/), but the documentation is sparse and I'm not sure if you can bind multiple IPs to the same instance and still configure them independently (and since you will need something like 17 IPs for a full Netflix solution, allowing for most known hardware, running 17 instances of HTTPS-SNI-Proxy, all configured differently, is madness). You should definitely use HAProxy instead (and you need to use the latest development version, NOT the stable one!). My HAProxy configuration is inspired by the full haproxy.conf from [here](https://github.com/trick77/tunlr-style-dns-unblocking) (not the poor-man's configuration, which only allows SNI-capable clients to proxy).
 
 Some important notes should accompany this configuration.
+
 1. Replace all instances of 1.2.3.4 with your VPS's public IP.
 2. As you can see, I am only proxying Netflix; you can feel free to add other services exactly the same way.
 3. You will notice that in the backend sections I am *not* sending server-alive checks. With these enabled it was using quite a bit of bandwidth on my VPS and I certainly don't want Netflix to be suspicious because an IP is sending so many server-alive checks (which would still get forwarded through the VPS!). It is safe to assume that the servers will be available; if not, the connection should just timeout.
