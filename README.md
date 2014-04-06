@@ -14,7 +14,16 @@ You must first assign multiple IP addresses to your LAN server. Many distros all
 # Create interfaces for DNS spoofing
 for i in `seq 0 16`; do ifconfig eth0:${i} 192.168.0.$(($i+101)) up; done
 ```
-This will create virtual interfaces eth0:0 to eth0:16, with IPs 192.168.0.101 to 192.168.0.117. You should check to make sure the interfaces were created using ifconfig, and check to make sure they work properly by pinging a few of those IPs. Generally, you should assign your server's real IP to be 192.168.0.100 so all IPs are consecutive. Feel free to change the IP range used, but note that you will have to modify the LAN proxy server and DNS spoofer configuration accordingly. Most routers allow certain ranges to be static, so you may want to play within that range to avoid trying to grab an IP already in use by another device.
+
+This will create virtual interfaces eth0:0 to eth0:16, with IPs 192.168.0.101 to 192.168.0.117.
+For linux distributions that do not have ifconfig anymore but instead use the ip command this line will do the same thing:
+```bash
+# Create interfaces for DNS spoofing
+for i in `seq 0 16`; do ip addr add 192.168.0.$(($i+101)) dev eth0; done
+```
+
+This will assign additional ips to the eth0 interface.
+You should check to make sure the additional addresses were created using ifconfig or ip, and check to make sure they work properly by pinging a few of those IPs. Generally, you should assign your server's real IP to be 192.168.0.100 so all IPs are consecutive. Feel free to change the IP range used, but note that you will have to modify the LAN proxy server and DNS spoofer configuration accordingly. Most routers allow certain ranges to be static, so you may want to play within that range to avoid trying to grab an IP already in use by another device.
 
 ###The LAN Proxy Server###
 You can probably use HTTPS-SNI-Proxy as described in the [Tunlr Clone guide](http://corporate-gadfly.github.io/Tunlr-Clone/), but the documentation is sparse and I'm not sure if you can bind multiple IPs to the same instance and still configure them independently (and since you will need something like 17 IPs for a full Netflix solution, allowing for most known hardware, running 17 instances of HTTPS-SNI-Proxy, all configured differently, is madness). You should definitely use HAProxy instead (and you need to use the latest development version, NOT the stable one!). My HAProxy configuration is inspired by the full haproxy.conf from [here](https://github.com/trick77/tunlr-style-dns-unblocking) (not the poor-man's configuration, which only allows SNI-capable clients to proxy).
